@@ -10,7 +10,7 @@ COPY config.yaml .
 COPY constants.py .
 COPY neoflex_rag.ipynb .
 COPY prompts/ prompts/
-COPY web_scrapers.py
+COPY web_scrapers.py .
 
 RUN apt-get update && apt-get install -y \
     curl \
