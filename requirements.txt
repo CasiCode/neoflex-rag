@@ -1,6 +1,7 @@
 jupyter
 numpy
 scikit-learn
+sentence-transformers
 langchain-text-splitters
 langchain-community
 langgraph
