@@ -1,0 +1,15 @@
+jupyter
+numpy
+scikit-learn
+langchain-text-splitters
+langchain-community
+langgraph
+langchain[openai]
+langchain-core
+duckduckgo-search
+fastapi
+uvicorn
+playwright
+langchain-apify
+pyyaml
+python-box

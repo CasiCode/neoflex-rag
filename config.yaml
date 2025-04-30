@@ -1,0 +1,30 @@
+model:
+  name: openai/gpt-4.1-nano
+  temperature: 0
+
+embeddings:
+  model_name: intfloat/multilingual-e5-large
+  score_lo: 0.7
+  score_hi: 1.0
+
+documents:
+  chunk_size: 1000
+  chunk_overlap: 100
+
+tfidf:
+  threshold_percentile: 30
+
+semantic_search:
+  k: 5
+
+rerank:
+  boost: 0.075
+  threshold: 0.25
+
+reformulate:
+  max_length: 250
+
+apify:
+  max_pages: 256
+  max_depth: 3
+  threshold: 1
