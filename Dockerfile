@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /workspace
 
-COPY requirements.txt config.yaml constants.py neoflex_rag.ipynb web_scrapers.py ./
+COPY requirements.txt config.yaml constants.py neoflex_rag.ipynb web_scrapers.py api.py .
 COPY prompts/ prompts/
 
 RUN apt-get update && apt-get install -y \
@@ -22,4 +22,6 @@ RUN apt-get update && apt-get install -y \
 
 EXPOSE 8888
 
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
+CMD ["/bin/sh", "-c", \
+    "uvicorn api:app --host 0.0.0.0 --port 8000 & \
+    jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=''"]
