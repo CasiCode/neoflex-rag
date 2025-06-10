@@ -1,24 +1,19 @@
 from typing import Callable, Optional
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-
-from langchain_core.exceptions import (
-    LangChainError,
-    APIConnectionError,
-    APIError,
-    RateLimitError,
-)
 
 
 class LocalAPIException(Exception):
     def __init__(self, details: str):
+        self.status_code = 503
         self.details = details
 
 
 class ExternalAPIException(Exception):
     def __init__(self, details: str):
+        self.status_code = 421
         self.details = details
 
 
@@ -49,23 +44,14 @@ class RequestHandler:
     
     def process_request(self, session_id: str, question: str):
         if self._process_func is None:
-            raise LocalAPIException(detail='No process function registered on server.')
+            raise LocalAPIException(details='No process function registered on server.')
         
         try:
             response = self._process_func(session_id, question)
             required_keys = {'answer', 'source_documents', 'session_id'}
             if not all(key in response for key in required_keys):
-                raise ExternalAPIException(detail='Bad response format.')
+                raise ExternalAPIException(details='Bad response format.')
             return response
-        
-        except APIConnectionError as e:
-            raise ExternalAPIException(f'Connection error: {str(e)}')
-        except RateLimitError as e:
-            raise ExternalAPIException(f'Rate limit exceeded: {str(e)}')
-        except APIError as e:
-            raise ExternalAPIException(f'OpenAI API error: {str(e)}')
-        except LangChainError as e:
-            raise ExternalAPIException(f'LangChain error: {str(e)}')
         except Exception as e:
             raise ExternalAPIException(f'Unexpected error: {str(e)}')
         
@@ -78,22 +64,18 @@ def get_handler():
     return request_handler
 
 @app.exception_handler(LocalAPIException)
-def local_api_exception_handler(exception: LocalAPIException):
+def local_api_exception_handler(request: Request, exc: LocalAPIException):
     return JSONResponse(
-        status_code=503,
-        content={'message': f'Oops! Local API did something... {exception.details}'}
+        status_code=exc.status_code,
+        content={'message': f'Oops! Local API did something... {exc.details}'}
     )
 
 @app.exception_handler(ExternalAPIException)
-def external_api_exception_handler(exception: ExternalAPIException):
-    status_code = 503
-    if 'Rate limit exceeded' in exception.details:
-        status_code = 429
-    if 'Connection error' in exception.details:
-        status_code = 504
+def external_api_exception_handler(request: Request, exc: ExternalAPIException):
+    status_code = exc.status_code
     return JSONResponse(
         status_code=status_code,
-        content={'message': f'Oops! External API did something... {exception.details}'}
+        content={'message': f'Oops! External API did something... {exc.details}'}
     )
 
 @app.post('/ask', response_model=Answer)
