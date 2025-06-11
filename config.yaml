@@ -18,8 +18,8 @@ semantic_search:
   k: 5
 
 rerank:
-  boost: 0.075
-  threshold: 0.25
+  boost: 0.05
+  threshold: 0.50
 
 reformulate:
   max_length: 250

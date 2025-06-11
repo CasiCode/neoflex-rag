@@ -5,8 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /workspace
 
-COPY requirements.txt config.yaml constants.py neoflex_rag.ipynb web_scrapers.py api.py .
-COPY prompts/ prompts/
+COPY . ./
 
 RUN apt-get update && apt-get install -y \
     curl unzip \
