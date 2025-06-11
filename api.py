@@ -4,13 +4,17 @@ from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from graph import process_input_message
 
+
+# Исключение на стороне FastAPI
 class LocalAPIException(Exception):
     def __init__(self, details: str):
         self.status_code = 503
         self.details = details
 
 
+# Исключение на стороне OpenAI
 class ExternalAPIException(Exception):
     def __init__(self, details: str):
         self.status_code = 421
@@ -33,6 +37,8 @@ class Answer(BaseModel):
     session_id: str
 
 
+# Обработчик запросов
+# По сути, обертка над _process_func, обрабатывающая исключения
 class RequestHandler:
     def __init__(self):
         self._process_func: Optional[Callable] = None
@@ -58,7 +64,7 @@ class RequestHandler:
 
 app = FastAPI()
 request_handler = RequestHandler()
-
+request_handler.set_process_function(process_input_message)
 
 def get_handler():
     return request_handler
@@ -87,5 +93,5 @@ def ask_question(q: Question, handler: RequestHandler = Depends(get_handler)):
         session_id=response['session_id']
     )
 
-def set_process_function(func: Callable):
-    request_handler.set_process_function(func)
+#def set_process_function(func: Callable):
+#    request_handler.set_process_function(func)

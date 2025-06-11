@@ -26,4 +26,6 @@ __pycache__/
 venv/
 env/
 
+documents_chroma_db/
+
 environment.yml

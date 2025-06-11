@@ -1,10 +1,10 @@
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 import asyncio
-import time
 
 from constants import CONTACTS_URL, CAREER_URL, CUSTOMERS_URL
 
 
+# Скрэппер для адресов компании в разных городах
 async def scrape_city_addresses():
     url = CONTACTS_URL
     city_data = {}
@@ -14,18 +14,21 @@ async def scrape_city_addresses():
     details_container_selector = '.selected-city-details'
 
     async with async_playwright() as p:
+        # Заходим браузером на страницу контактов
         browser = await p.firefox.launch(headless=True)
         context = await browser.new_context(ignore_https_errors=True)
         page = await context.new_page()
 
         await page.goto(url, wait_until='networkidle', timeout=60000)
 
+        # Находим контейнер с кнопками
         await page.wait_for_selector(cities_container_selector, state='visible', timeout=3000)
         cities_container = page.locator(cities_container_selector)
 
         city_buttons_locator = cities_container.locator(button_selector)
         button_count = await city_buttons_locator.count()
 
+        # Прокликиваем по очкереди каждую кнопку, собирая информацию по городам
         for i in range(button_count):
             current_buttons_locator = cities_container.locator(button_selector)
             button = current_buttons_locator.nth(i)
@@ -50,7 +53,9 @@ async def scrape_city_addresses():
 
     return city_data
 
-    
+
+# Скрэппер для информации о заказчиках
+# Работает по тому же принципу, что и scrape_city_addresses    
 async def scrape_customer_details():
     url = CUSTOMERS_URL
     customer_data = []
@@ -88,13 +93,12 @@ async def scrape_customer_details():
             customers_count = await customer_block_locator.count()
 
             for j in range(customers_count):
-                current_customers_locator = customers_container.locator(customers_list_block_selector)
-                block = current_customers_locator.nth(j)
-
-                await block.scroll_into_view_if_needed()
-                await block.click(timeout=3000)
-
                 try:
+                    current_customers_locator = customers_container.locator(customers_list_block_selector)
+                    block = current_customers_locator.nth(j) # Troubles with blocks 11-15
+                    await block.scroll_into_view_if_needed()
+                    await block.click(timeout=3000)
+
                     locator = page.locator(customers_modal_content_selector)
                     await locator.wait_for(state='visible', timeout=10000)
 
@@ -104,10 +108,9 @@ async def scrape_customer_details():
 
                     close_button_locator = page.locator(close_button_selector)
                     await close_button_locator.click(timeout=3000)
-
                     await page.locator(customers_modal_content_selector).wait_for(state='hidden', timeout=10000)
-
-                except PlaywrightTimeoutError:
+                except Exception as e:
+                    print(f'{e}: Skipping block {j}')
                     continue
 
         await browser.close()
@@ -115,6 +118,7 @@ async def scrape_customer_details():
     return customer_data
 
 
+# Скрэппер для имейла карьерного центра
 async def scrape_career_details():
     url = CAREER_URL
     email_container_selector = '.InfoBLock__info-info'

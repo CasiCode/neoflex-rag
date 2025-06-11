@@ -14,3 +14,5 @@ playwright
 langchain-apify
 pyyaml
 python-box
+langchain-chroma
+langchain-huggingface
