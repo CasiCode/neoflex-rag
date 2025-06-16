@@ -15,5 +15,5 @@ embeddings = HuggingFaceEmbeddings(model_name=config.embeddings.model_name)
 vector_store = Chroma(
     collection_name='documents',
     embedding_function=embeddings,
-    persist_directory='../../../documents_chroma_db',
+    persist_directory='app/storage/documents_chroma_db',
 )
