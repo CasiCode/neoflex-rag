@@ -7,9 +7,9 @@ from langgraph.graph import MessagesState, StateGraph, END
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import MemorySaver
 
-from tools import retrieve_from_local, web_search
-from utils import load_prompt, get_config
-from llm import llm
+from app.src.agent.tools import retrieve_from_local, web_search
+from app.src.utils import load_prompt, get_config
+from app.src.agent.llm import llm
 
 
 config = get_config()
@@ -21,7 +21,7 @@ class State(MessagesState):
 
 # Роут на ретривер либо генерация прямого ответа
 def query_or_respond(state: MessagesState):
-    prompt = [SystemMessage(content=load_prompt('prompts/qr-prompt.txt'))] + state['messages']
+    prompt = [SystemMessage(content=load_prompt('app/src/agent/prompts/qr-prompt.txt'))] + state['messages']
     llm_with_tools = llm.bind_tools([retrieve_from_local, web_search])
     response = llm_with_tools.invoke(prompt)
     return {'messages': [response]}
@@ -50,7 +50,7 @@ def generate(state: MessagesState):
     if not docs_content:
         docs_content = 'Контекст отсутствует'
     system_message_content = (
-        f"{load_prompt('prompts/generate-prompt.txt')}"
+        f"{load_prompt('app/src/agent/prompts/generate-prompt.txt')}"
         f'{docs_content}'
     )
     conversation_msgs = [

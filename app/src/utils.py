@@ -1,12 +1,20 @@
+import warnings
+
 import yaml
 from box import Box
 
 
 # Загрузчик конфига из yaml файла в объект
 def get_config():
-    with open('config.yaml', 'r') as f:
-        config_dict = yaml.safe_load(f)
-    return Box(config_dict)
+    try:
+      with open('app/src/config.yaml', 'r') as f:
+          config_dict = yaml.safe_load(f)
+      return Box(config_dict)
+    except Exception as e:
+        warnings.warn(
+            message=f'Oops, error occured! {e}',
+            stacklevel=3
+        )
 
 config = get_config()
 

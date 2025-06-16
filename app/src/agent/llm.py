@@ -4,7 +4,7 @@ import os
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_openai.chat_models import ChatOpenAI
 
-from utils import load_prompt, get_config
+from app.src.utils import load_prompt, get_config
 
 
 config = get_config()
@@ -28,7 +28,7 @@ llm = ChatOpenAI(
 
 # Обращается к LLM, чтобы извлечь подходящие теги из пользовательского запроса.
 def get_query_tags(user_query: str):
-    prompt = load_prompt('prompts/tag-getter-prompt.txt')
+    prompt = load_prompt('app/src/agent/prompts/tag-getter-prompt.txt')
     f_prompt = prompt.format(user_query=user_query)
     response = llm.invoke(f_prompt)
 
@@ -48,7 +48,7 @@ def reformulate_query(user_query: str):
 
     prompt = [
         SystemMessage(content=(
-            load_prompt('prompts/reformulation-prompt.txt')
+            load_prompt('app/src/agent/prompts/reformulation-prompt.txt')
         )),
         HumanMessage(content=user_query)
     ]
