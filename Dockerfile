@@ -22,5 +22,5 @@ RUN apt-get update && apt-get install -y \
 EXPOSE 8888
 
 CMD ["/bin/sh", "-c", \
-    "uvicorn api:app --host 0.0.0.0 --port 8000 & \
+    "uvicorn app.api:app --host 0.0.0.0 --port 8000 & \
     jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=''"]

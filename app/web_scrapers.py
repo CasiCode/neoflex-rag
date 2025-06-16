@@ -1,7 +1,7 @@
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 import asyncio
 
-from constants import CONTACTS_URL, CAREER_URL, CUSTOMERS_URL
+from app.constants import CONTACTS_URL, CAREER_URL, CUSTOMERS_URL
 
 
 # Скрэппер для адресов компании в разных городах

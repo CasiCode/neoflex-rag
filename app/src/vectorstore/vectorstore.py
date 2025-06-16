@@ -1,7 +1,7 @@
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-from utils import get_config
+from app.src.utils import get_config
 
 
 config = get_config()
@@ -15,5 +15,5 @@ embeddings = HuggingFaceEmbeddings(model_name=config.embeddings.model_name)
 vector_store = Chroma(
     collection_name='documents',
     embedding_function=embeddings,
-    persist_directory='./documents_chroma_db',
+    persist_directory='../../../documents_chroma_db',
 )

@@ -2,10 +2,10 @@ from langchain_core.tools import tool
 
 from langchain_community.tools import DuckDuckGoSearchResults
 
-from utils import soft_merge, rerank_by_tags, get_config
-from vectorstore import vector_store
-from llm import get_query_tags, reformulate_query
-from constants import DOCUMENT_TAGS
+from app.src.utils import soft_merge, rerank_by_tags, get_config
+from app.src.vectorstore.vectorstore import vector_store
+from app.src.agent.llm import get_query_tags, reformulate_query
+from app.constants import DOCUMENT_TAGS
 
 
 config = get_config()

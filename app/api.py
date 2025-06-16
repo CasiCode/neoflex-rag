@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from graph import process_input_message
+from app.src.agent.graph import process_input_message
 
 
 # Исключение на стороне FastAPI

@@ -1,4 +1,5 @@
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *.so
 
@@ -26,6 +27,6 @@ __pycache__/
 venv/
 env/
 
-documents_chroma_db/
+**/documents_chroma_db/
 
 environment.yml
